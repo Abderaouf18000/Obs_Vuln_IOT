@@ -1,0 +1,286 @@
+<?php
+/**
+ * Page principale des familles de produits
+ * Récupère dynamiquement les familles depuis le fichier CSV
+ * La catégorie "Autres" s'affiche toujours en dernier
+ */
+session_start();
+
+// Récupérer l'année analysée depuis la session
+$annee_analysee = isset($_SESSION['current_log']['annee']) ? $_SESSION['current_log']['annee'] : '2024'; // Valeur par défaut si non définie
+
+// Chemin du fichier CSV
+$csv_file = '10-produits_avec_familles.csv';
+// Si le chemin spécifique est disponible, utilisez-le
+$specific_path = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/produit/'. $annee_analysee .'/1-2-produits_avec_familles-(manuelle).csv';
+if (file_exists($specific_path)) {
+    $csv_file = $specific_path;
+}
+
+// Récupération des familles depuis le CSV
+$familles = [];
+$familles_count = [];
+
+if (($handle = fopen($csv_file, "r")) !== FALSE) {
+    // Lire l'en-tête
+    $header = fgetcsv($handle, 0, ",", "\"", "\\");
+    
+    // Chercher l'index de la colonne 'Family'
+    $famille_index = array_search('Family', $header);
+    
+    if ($famille_index === false) {
+        die("Structure du CSV incorrecte: colonne 'Family' manquante");
+    }
+    
+    // Parcourir le fichier CSV
+    while (($data = fgetcsv($handle, 0, ",", "\"", "\\")) !== FALSE) {
+        $famille_nom = $data[$famille_index];
+        
+        // Sauter les lignes vides ou sans famille
+        if (empty($famille_nom)) continue;
+        
+        // Compter les produits par famille
+        if (!isset($familles_count[$famille_nom])) {
+            $familles_count[$famille_nom] = 0;
+        }
+        $familles_count[$famille_nom]++;
+    }
+    
+    fclose($handle);
+    
+    // On vérifie si "Autres" existe dans la liste
+    $autres_count = 0;
+    if (isset($familles_count['Autres'])) {
+        $autres_count = $familles_count['Autres'];
+        unset($familles_count['Autres']); // On retire "Autres" pour le tri
+    }
+    
+    // Trier les familles par ordre alphabétique
+    ksort($familles_count);
+    
+    // Remettre "Autres" à la fin si elle existait
+    if ($autres_count > 0) {
+        $familles_count['Autres'] = $autres_count;
+    }
+} else {
+    die("Impossible d'ouvrir le fichier CSV: " . $csv_file);
+}
+
+// Définir les icônes et couleurs pour chaque famille
+$icones = [
+    'Réseau et Connectivité' => ['icone' => 'fa-network-wired', 'couleur' => '#3498db'],
+    'Informatique et Matériel Informatique' => ['icone' => 'fa-laptop', 'couleur' => '#2ecc71'],
+    'Industriel et Automatisation' => ['icone' => 'fa-industry', 'couleur' => '#e74c3c'],
+    'Sécurité et Surveillance' => ['icone' => 'fa-shield-alt', 'couleur' => '#f39c12'],
+    'IoT et Objets Connectés' => ['icone' => 'fa-wifi', 'couleur' => '#9b59b6'],
+    'Écosystème Connecté' => ['icone' => 'fa-wifi', 'couleur' => '#9b59b6'], // Alias pour IoT
+    'Audio et Vidéo' => ['icone' => 'fa-volume-up', 'couleur' => '#34495e'],
+    'Serveurs et Data Center' => ['icone' => 'fa-server', 'couleur' => '#1abc9c'],
+    'Énergie et Gestion de l\'Alimentation' => ['icone' => 'fa-bolt', 'couleur' => '#f1c40f'],
+    'Imprimantes et Périphériques' => ['icone' => 'fa-print', 'couleur' => '#e67e22'],
+    'Mobile et Téléphonie' => ['icone' => 'fa-mobile-alt', 'couleur' => '#27ae60'],
+    'Plateformes et Technologies Avancées' => ['icone' => 'fa-microchip', 'couleur' => '#8e44ad'],
+    'Autres' => ['icone' => 'fa-ellipsis-h', 'couleur' => '#95a5a6']
+];
+
+// Icône et couleur par défaut pour les familles sans correspondance
+$default_icon = ['icone' => 'fa-box', 'couleur' => '#7f8c8d'];
+
+// Fonction pour générer une URL propre
+function generateUrl($famille_nom) {
+    return "categories.php?famille=" . urlencode($famille_nom);
+}
+
+// Fonction pour obtenir une description courte basée sur le nom de famille
+function getShortDescription($famille_nom) {
+    $descriptions = [
+        'Réseau et Connectivité' => 'Switch, Router, Modem, Wi-Fi, etc.',
+        'Informatique et Matériel Informatique' => 'PC, Laptop, Workstation, etc.',
+        'Industriel et Automatisation' => 'PLC, Contrôleurs industriels, Capteurs, etc.',
+        'Sécurité et Surveillance' => 'Firewall, Caméras, Biométrie, etc.',
+        'IoT et Objets Connectés' => 'Smart Devices, Wearables, RFID, etc.',
+        'Écosystème Connecté' => 'Smart Devices, Wearables, RFID, etc.',
+        'Audio et Vidéo' => 'Enceintes, Codecs, Systèmes multimédias, etc.',
+        'Serveurs et Data Center' => 'Serveurs, Stockage, Hyperconverged, etc.',
+        'Énergie et Gestion de l\'Alimentation' => 'Chargeurs EV, UPS, Solar, etc.',
+        'Imprimantes et Périphériques' => 'Imprimantes 3D, Multifonctions, etc.',
+        'Mobile et Téléphonie' => 'Smartphones, VoIP, Hotspots, etc.',
+        'Plateformes et Technologies Avancées' => 'AI, GPU, Robotics, etc.',
+        'Autres' => 'SSD, GPON, etc.'
+    ];
+    
+    return isset($descriptions[$famille_nom]) ? $descriptions[$famille_nom] : 'Produits divers';
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue des Produits</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            padding: 20px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            margin: 0;
+            color: #343a40;
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .categories-container {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .category-box {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            height: 100%;
+            background-color: white;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .category-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .category-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .category-description {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .category-count {
+            margin-top: 10px;
+            background-color: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        @media (min-width: 1200px) {
+            .col-xl-2 {
+                flex: 0 0 16.666667%;
+                max-width: 16.666667%;
+            }
+        }
+        
+        .no-families {
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1 class="page-title">Catalogue des Produits</h1>
+            <div>
+                <a href="../0-Accuille.php" class="btn btn-primary">
+                    <i class="fas fa-home mr-1"></i> Accueil
+                </a>
+            </div>
+        </div>
+        
+        <div class="categories-container">
+            <h2>Liste des familles de produits</h2>
+            
+            <?php if (empty($familles_count)): ?>
+                <div class="no-families">
+                    <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
+                    <p>Aucune famille trouvée dans le fichier CSV.</p>
+                </div>
+            <?php else: ?>
+                <div class="row">
+                    <?php foreach ($familles_count as $famille_nom => $count): ?>
+                        <?php 
+                            $icon_data = isset($icones[$famille_nom]) ? $icones[$famille_nom] : $default_icon;
+                            $description = getShortDescription($famille_nom);
+                        ?>
+                        <div class="col-md-3 col-sm-4 col-6 mb-4">
+                            <a href="<?php echo generateUrl($famille_nom); ?>" class="text-decoration-none">
+                                <div class="category-box">
+                                    <div class="category-icon" style="background-color: <?php echo $icon_data['couleur']; ?>">
+                                        <i class="fas <?php echo $icon_data['icone']; ?>"></i>
+                                    </div>
+                                    <div class="category-title"><?php echo $famille_nom; ?></div>
+                                    <div class="category-description"><?php echo $description; ?></div>
+                                    <div class="category-count"><?php echo $count; ?> produits</div>
+                                </div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS (optionnel) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
