@@ -12,8 +12,8 @@ The directories listed below must be populated via a separate download script/bu
 
 All paths listed below are **relative to the project root directory** (where this file is located). The application expects this structure to exist before execution.
 
-* `Obs_Vuln_IOT/PHP/2-Prédiction_vendeurs_2024.csv`
-* `Obs_Vuln_IOT/Python/cvelist_mitre_YYYY/`: from 2015 to 2025
-* `Obs_Vuln_IOT/Python/cvelist_nist/`
-* `Obs_Vuln_IOT/Python/produit/`
-* `Obs_Vuln_IOT/Python/results/`
+* `PHP/2-Prédiction_vendeurs_2024.csv`
+* `Python/cvelist_mitre_YYYY/`: from 2015 to 2025
+* `Python/cvelist_nist/`
+* `Python/produit/`
+* `Python/results/`
