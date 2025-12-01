@@ -5,7 +5,7 @@ import time
 import json
 
 # Définir le répertoire de base où se trouvent tous les scripts
-BASE_DIR = ""
+BASE_DIR = "./"
 
 
 def executer_workflow_cve(annee):
