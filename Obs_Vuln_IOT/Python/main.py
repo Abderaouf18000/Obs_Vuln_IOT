@@ -135,7 +135,7 @@ def get_date_published(cve_id):
 
         # Préparer la commande
         # Utiliser l'interpréteur Python de l'environnement env_1
-        commande = ["/Users/abderaoufbouhali/.pyenv/versions/env_1/bin/python", "-c"]
+        commande = ["python3", "-c"]
 
         # Préparer le code à exécuter
         code_script = ""

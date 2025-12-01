@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $anneeParam = escapeshellarg($annee);
 
                     // Commande pour Mac (redirection vers fichier de log)
-                    $command = "/Users/abderaoufbouhali/.pyenv/versions/env_1/bin/python $pythonScript $anneeParam $typeParam > $logFile 2>&1 &";
+                    $command = "python3 $pythonScript $anneeParam $typeParam > $logFile 2>&1 &";
 
                     // Exécuter la commande
                     exec($command);
