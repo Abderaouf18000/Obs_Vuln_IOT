@@ -8,15 +8,13 @@ class vstatistique
     public $most_commun_typre;
     public $average_score;
 
-    public function __construct()
-    {
-        
-    }
+    public function __construct() {}
 
-    function lireProduitsEtCveAvecScoresEtTypes($vendeurRechercher) {
-        $produitsCsvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/6-liste_vendeurs_h-nist.csv';
-        $scoresCsvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/2-liste_cve_scores-nist-mitre.csv';
-        $typesCsvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/19-associer_cwe18_type1000.csv';
+    function lireProduitsEtCveAvecScoresEtTypes($vendeurRechercher)
+    {
+        $produitsCsvFile = '../Python/results/6-liste_vendeurs_h-nist.csv';
+        $scoresCsvFile = '../Python/results/2-liste_cve_scores-nist-mitre.csv';
+        $typesCsvFile = '../Python/results/19-associer_cwe18_type1000.csv';
 
         // Vérifier si les fichiers existent et sont lisibles
         if (!file_exists($produitsCsvFile) || !is_readable($produitsCsvFile)) {
@@ -111,12 +109,12 @@ class vstatistique
                     // Soit ajuster la taille des tableaux
                     // $ligne = array_pad($ligne, count($headerProduits), "");
                 }
-                
+
                 $ligneAssoc = array_combine($headerProduits, $ligne);
                 if (!$ligneAssoc) {
                     continue; // Passer les lignes invalides
                 }
-                
+
                 // Si le vendeur correspond, ajouter le produit et ses informations
                 if (strcasecmp($ligneAssoc['Vendor'], $vendeurRechercher) === 0) {
                     $produit = $ligneAssoc['Product'];
@@ -147,32 +145,33 @@ class vstatistique
         return $produitsParVendeur;
     }
 
-    function countUniqueVulnerabilitiesByVendor($vendorName) {
-        $filename = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/6-liste_vendeurs_h_cve-nist.csv';
+    function countUniqueVulnerabilitiesByVendor($vendorName)
+    {
+        $filename = '../Python/results/6-liste_vendeurs_h_cve-nist.csv';
         // Vérifier que le fichier existe
         if (!file_exists($filename)) {
             return 0;
         }
-    
+
         // Ouvrir le fichier
         $file = fopen($filename, 'r');
         if (!$file) {
             return 0;
         }
-    
+
         // Initialiser le tableau pour stocker les CVE_ID uniques
         $uniqueCveIds = [];
-    
+
         // Lire et ignorer l'en-tête (si présent)
         $header = fgetcsv($file, 0, ",", "\"", "\\");
-    
+
         // Lire chaque ligne du fichier
         while (($data = fgetcsv($file, 0, ",", "\"", "\\")) !== FALSE) {
             // Vérifier que la ligne a au moins 3 colonnes
             if (count($data) >= 3) {
                 $vendor = $data[0]; // Colonne du vendeur (index 0)
                 $cveId = $data[2];  // Colonne du CVE_ID (index 2)
-    
+
                 // Si le vendeur correspond à celui recherché (insensible à la casse)
                 if (strtolower($vendor) === strtolower($vendorName)) {
                     // Ajouter le CVE_ID au tableau des identifiants uniques
@@ -180,24 +179,24 @@ class vstatistique
                 }
             }
         }
-    
+
         // Fermer le fichier
         fclose($file);
-        
-        $this->nbrvuln = count($uniqueCveIds);
 
+        $this->nbrvuln = count($uniqueCveIds);
     }
 
-    function countVulnerabilitiesBySeverity($vendorName) {
-        $filename = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/20-fusion_2fin_6-objscore.csv';
-        
+    function countVulnerabilitiesBySeverity($vendorName)
+    {
+        $filename = '../Python/results/20-fusion_2fin_6-objscore.csv';
+
         // Vérifier que le fichier existe
         if (!file_exists($filename)) {
             return [
                 'error' => 'Le fichier ' . $filename . ' n\'existe pas.'
             ];
         }
-        
+
         // Ouvrir le fichier
         $file = fopen($filename, 'r');
         if (!$file) {
@@ -205,7 +204,7 @@ class vstatistique
                 'error' => 'Impossible d\'ouvrir le fichier ' . $filename
             ];
         }
-        
+
         // Initialiser les compteurs (en minuscules)
         $severityCounts = [
             'critical' => 0,
@@ -215,12 +214,12 @@ class vstatistique
             'none' => 0,
             'unknown' => 0
         ];
-        
+
         $totalCount = 0;
-        
+
         // Lire l'en-tête
         $header = fgetcsv($file, 0, ",", "\"", "\\");
-        
+
         // Vérifier que les colonnes nécessaires sont présentes
         if (!in_array('Vendor', $header) || !in_array('Severity', $header)) {
             fclose($file);
@@ -228,31 +227,31 @@ class vstatistique
                 'error' => 'Le fichier ne contient pas les colonnes requises (Vendor, Severity)'
             ];
         }
-        
+
         // Trouver les index des colonnes
         $vendorIdx = array_search('Vendor', $header);
         $severityIdx = array_search('Severity', $header);
-        
+
         // Normaliser le nom du vendeur recherché
         $searchVendor = strtolower(trim($vendorName));
-        
+
         // Lire chaque ligne du fichier
         while (($data = fgetcsv($file, 0, ",", "\"", "\\")) !== FALSE) {
             // Vérifier que la ligne a les colonnes nécessaires
             if (count($data) > max($vendorIdx, $severityIdx)) {
                 $vendor = $data[$vendorIdx];
                 $severity = $data[$severityIdx];
-                
+
                 // Normaliser le nom du vendeur
                 $normalizedVendor = strtolower(trim($vendor));
-                
+
                 // Comparaison exacte pour le vendeur
                 if ($normalizedVendor === $searchVendor) {
                     $totalCount++;
-                    
+
                     // Convertir la sévérité en minuscules et supprimer les espaces
                     $normalizedSeverity = strtolower(trim($severity));
-                    
+
                     // Vérifier si cette sévérité existe dans notre liste de compteurs
                     if (isset($severityCounts[$normalizedSeverity])) {
                         $severityCounts[$normalizedSeverity]++;
@@ -262,110 +261,112 @@ class vstatistique
                 }
             }
         }
-        
+
         // Fermer le fichier
         fclose($file);
-        
+
         // Préparer le résultat
         $result = [
             'vendor' => $vendorName,
             'total' => $totalCount,
         ];
-        
+
         // Ajouter les compteurs par sévérité
         foreach ($severityCounts as $severity => $count) {
             $result[$severity] = $count;
         }
-        
+
         // Calculer les pourcentages
         if ($totalCount > 0) {
             foreach ($severityCounts as $severity => $count) {
                 $result[$severity . '_percent'] = round(($count / $totalCount) * 100, 2);
             }
         }
-        
+
         return $result;
     }
 
-    function getTypeVulnerabilityByVendor($vendorName) {
-    $csvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/22-typepop_vendor-21.csv';
-    
-    // Vérifier si le fichier existe
-    if (!file_exists($csvFile)) {
-        return ['error' => 'Le fichier CSV n\'existe pas'];
-    }
-    
-    // Ouvrir le fichier CSV
-    $handle = fopen($csvFile, 'r');
-    if (!$handle) {
-        return ['error' => 'Impossible d\'ouvrir le fichier CSV'];
-    }
-    
-    $result = null;
-    $header = true;
-    
-    // Parcourir le fichier CSV
-    // Ajout du paramètre d'échappement pour éviter l'avertissement de dépréciation
-    while (($data = fgetcsv($handle, 1000, ',', '"', '\\')) !== FALSE) {
-        // Ignorer l'en-tête
-        if ($header) {
-            $header = false;
-            continue;
+    function getTypeVulnerabilityByVendor($vendorName)
+    {
+        $csvFile = '../Python/results/22-typepop_vendor-21.csv';
+
+        // Vérifier si le fichier existe
+        if (!file_exists($csvFile)) {
+            return ['error' => 'Le fichier CSV n\'existe pas'];
         }
-        
-        // Vérifier si les données sont valides
-        if (count($data) >= 2) {
-            $vendor = trim($data[0]);
-            $vulnerability = trim($data[1]);
-            
-            // Recherche insensible à la casse du vendeur
-            if (strcasecmp($vendor, $vendorName) === 0) {
-                $result = $vulnerability;
-                break; // Sortir de la boucle dès qu'on a trouvé le vendeur
+
+        // Ouvrir le fichier CSV
+        $handle = fopen($csvFile, 'r');
+        if (!$handle) {
+            return ['error' => 'Impossible d\'ouvrir le fichier CSV'];
+        }
+
+        $result = null;
+        $header = true;
+
+        // Parcourir le fichier CSV
+        // Ajout du paramètre d'échappement pour éviter l'avertissement de dépréciation
+        while (($data = fgetcsv($handle, 1000, ',', '"', '\\')) !== FALSE) {
+            // Ignorer l'en-tête
+            if ($header) {
+                $header = false;
+                continue;
+            }
+
+            // Vérifier si les données sont valides
+            if (count($data) >= 2) {
+                $vendor = trim($data[0]);
+                $vulnerability = trim($data[1]);
+
+                // Recherche insensible à la casse du vendeur
+                if (strcasecmp($vendor, $vendorName) === 0) {
+                    $result = $vulnerability;
+                    break; // Sortir de la boucle dès qu'on a trouvé le vendeur
+                }
             }
         }
-    }
-    
-    fclose($handle);
-    
-    // Vérifier si un résultat a été trouvé
-    if ($result === null) {
-        return "Type not yet assigned";
-    }
-    
-    return $result;
-}
 
-    function getVendorAverageScore($vendorName, $csvFilePath = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/23-score_moy_vendor.csv', $precision = 2) {
+        fclose($handle);
+
+        // Vérifier si un résultat a été trouvé
+        if ($result === null) {
+            return "Type not yet assigned";
+        }
+
+        return $result;
+    }
+
+    function getVendorAverageScore($vendorName, $csvFilePath = '../Python/results/23-score_moy_vendor.csv', $precision = 2)
+    {
         // Vérifier si le fichier existe
         if (!file_exists($csvFilePath)) {
             error_log("Erreur: Le fichier CSV '$csvFilePath' n'existe pas");
             return null;
         }
-        
+
         // Ouvrir le fichier CSV
         $file = fopen($csvFilePath, 'r');
         if (!$file) {
             error_log("Erreur: Impossible d'ouvrir le fichier CSV '$csvFilePath'");
             return null;
         }
-        
+
         // Lire l'en-tête pour déterminer l'index de la colonne du score
         // Ajouté tous les paramètres requis pour éviter l'avertissement de dépréciation
         $header = fgetcsv($file, 0, ",", "\"", "\\");
         $vendorIndex = array_search('Vendor', $header);
         $scoreIndex = array_search('Average_CVSS_Score', $header);
-        
+
         // Vérifier si les colonnes requises existent
         if ($vendorIndex === false || $scoreIndex === false) {
             error_log("Erreur: Les colonnes nécessaires ne sont pas présentes dans le fichier CSV");
             fclose($file);
             return null;
         }
-        
+
         // Variable pour stocker le score moyen du vendeur
         $averageScore = null;
-        
+
         // Parcourir le fichier pour trouver le vendeur
         while (($row = fgetcsv($file, 0, ",", "\"", "\\")) !== false) {
             if (strcasecmp($row[$vendorIndex], $vendorName) === 0) {
@@ -373,48 +374,49 @@ class vstatistique
                 break;
             }
         }
-        
+
         // Fermer le fichier
         fclose($file);
-        
+
         // Arrondir le score si un vendeur a été trouvé
         if ($averageScore !== null) {
             $averageScore = round($averageScore, $precision);
         }
-        
+
         return $averageScore !== null ? $averageScore : 0.0;
     }
 
-    function getVendorAverageFixTime($vendorName) {
-        $csvFilePath = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/14-temp_moy_vendeur-mitre.csv';
+    function getVendorAverageFixTime($vendorName)
+    {
+        $csvFilePath = '../Python/results/14-temp_moy_vendeur-mitre.csv';
         // Vérifier si le fichier existe
         if (!file_exists($csvFilePath)) {
             error_log("Erreur: Le fichier CSV '$csvFilePath' n'existe pas");
             return null;
         }
-        
+
         // Ouvrir le fichier CSV
         $file = fopen($csvFilePath, 'r');
         if (!$file) {
             error_log("Erreur: Impossible d'ouvrir le fichier CSV '$csvFilePath'");
             return null;
         }
-        
+
         // Lire l'en-tête pour déterminer l'index de la colonne du temps moyen
         $header = fgetcsv($file, 0, ",", "\"", "\\");
         $vendorIndex = array_search('Vendor', $header);
         $fixTimeIndex = array_search('Avg_Fix_Time', $header);
-        
+
         // Vérifier si les colonnes requises existent
         if ($vendorIndex === false || $fixTimeIndex === false) {
             error_log("Erreur: Les colonnes nécessaires ne sont pas présentes dans le fichier CSV");
             fclose($file);
             return null;
         }
-        
+
         // Variable pour stocker le temps moyen de correction
         $avgFixTime = null;
-        
+
         // Parcourir le fichier pour trouver le vendeur
         while (($row = fgetcsv($file, 0, ",", "\"", "\\")) !== false) {
             // Comparaison insensible à la casse
@@ -423,55 +425,56 @@ class vstatistique
                 break;
             }
         }
-        
+
         // Fermer le fichier
         fclose($file);
-        
+
         return $avgFixTime;
     }
 
-    function getVendorCorrectionTimes($vendorName) {
-        $csvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/27-traitment_26.csv';
-    
+    function getVendorCorrectionTimes($vendorName)
+    {
+        $csvFile = '../Python/results/27-traitment_26.csv';
+
         // Vérifier si le fichier existe
         if (!file_exists($csvFile)) {
             return ['error' => 'Le fichier CSV n\'existe pas'];
         }
-        
+
         // Ouvrir le fichier CSV
         if (($handle = fopen($csvFile, "r")) !== FALSE) {
             // Lire la première ligne pour obtenir les en-têtes
             $headers = fgetcsv($handle, 1000, ",", "\"", "\\");
-            
+
             // Trouver les index des colonnes
             $vendorIndex = array_search('Vendor', $headers);
             $criticalAvgIndex = array_search('CRITICAL_avg', $headers);
             $highAvgIndex = array_search('HIGH_avg', $headers);
             $mediumAvgIndex = array_search('MEDIUM_avg', $headers);
             $lowAvgIndex = array_search('LOW_avg', $headers);
-            
+
             // Vérifier si la colonne Vendor existe
             if ($vendorIndex === false) {
                 fclose($handle);
                 return ['error' => 'Format de CSV invalide, colonne Vendor non trouvée'];
             }
-            
+
             // Lire les données
             while (($data = fgetcsv($handle, 1000, ",", "\"", "\\")) !== FALSE) {
                 if (isset($data[$vendorIndex]) && $data[$vendorIndex] == $vendorName) {
                     // Récupérer les valeurs moyennes et les arrondir à des entiers
                     $result = [
                         'vendor' => $vendorName,
-                        'critical' => ($criticalAvgIndex !== false && isset($data[$criticalAvgIndex]) && $data[$criticalAvgIndex] !== '') ? 
+                        'critical' => ($criticalAvgIndex !== false && isset($data[$criticalAvgIndex]) && $data[$criticalAvgIndex] !== '') ?
                             intval(round(floatval($data[$criticalAvgIndex]))) : null,
-                        'high' => ($highAvgIndex !== false && isset($data[$highAvgIndex]) && $data[$highAvgIndex] !== '') ? 
+                        'high' => ($highAvgIndex !== false && isset($data[$highAvgIndex]) && $data[$highAvgIndex] !== '') ?
                             intval(round(floatval($data[$highAvgIndex]))) : null,
-                        'medium' => ($mediumAvgIndex !== false && isset($data[$mediumAvgIndex]) && $data[$mediumAvgIndex] !== '') ? 
+                        'medium' => ($mediumAvgIndex !== false && isset($data[$mediumAvgIndex]) && $data[$mediumAvgIndex] !== '') ?
                             intval(round(floatval($data[$mediumAvgIndex]))) : null,
-                        'low' => ($lowAvgIndex !== false && isset($data[$lowAvgIndex]) && $data[$lowAvgIndex] !== '') ? 
+                        'low' => ($lowAvgIndex !== false && isset($data[$lowAvgIndex]) && $data[$lowAvgIndex] !== '') ?
                             intval(round(floatval($data[$lowAvgIndex]))) : null
                     ];
-                    
+
                     fclose($handle);
                     return $result;
                 }
@@ -479,14 +482,12 @@ class vstatistique
             fclose($handle);
             return ['error' => 'Vendeur non trouvé'];
         }
-        
+
         return ['error' => 'Impossible d\'ouvrir le fichier CSV'];
     }
-    
-    function  msg_hello($vendeur){
+
+    function  msg_hello($vendeur)
+    {
         echo $vendeur;
     }
-
-
-
 }

@@ -4,7 +4,8 @@ ini_set('memory_limit', '1024M');
 session_start();
 
 // Fonction pour formater les nombres avec séparateur de milliers
-function formatNumber($number) {
+function formatNumber($number)
+{
     return number_format($number);
 }
 
@@ -12,7 +13,7 @@ function formatNumber($number) {
 $categorie_filtre = isset($_GET['categorie']) ? htmlspecialchars($_GET['categorie'], ENT_QUOTES, 'UTF-8') : null;
 
 // Traitement des données CSV
-$csvFile = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/results/11-fusion_9_10_14-fin.csv';
+$csvFile = '../Python/results/11-fusion_9_10_14-fin.csv';
 $csvData = [];
 $totalVendeurs = 0;
 $totalVulnerabilites = 0;
@@ -22,21 +23,21 @@ $totalProduits = 0;
 $vendeurs_filtres = [];
 if ($categorie_filtre) {
     $categoryCsvFile = '10produits_avec_familles.csv';
-    $specific_path = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/categorie/categ_file-2024/10-produits_avec_familles.csv';
+    $specific_path = '../Python/categorie/categ_file-2024/10-produits_avec_familles.csv';
     if (file_exists($specific_path)) {
         $categoryCsvFile = $specific_path;
     }
-    
+
     if (file_exists($categoryCsvFile)) {
         $handle = fopen($categoryCsvFile, 'r');
-        
+
         // Lire l'en-tête
         $header = fgetcsv($handle, 0, ",", "\"", "\\");
-        
+
         // Chercher les index des colonnes importantes
         $vendor_index = array_search('Vendor', $header);
         $category_index = array_search('Category', $header);
-        
+
         if ($vendor_index !== false && $category_index !== false) {
             // Parcourir le fichier CSV
             while (($data = fgetcsv($handle, 0, ",", "\"", "\\")) !== FALSE) {
@@ -46,7 +47,7 @@ if ($categorie_filtre) {
                 }
             }
         }
-        
+
         fclose($handle);
     }
 }
@@ -54,27 +55,27 @@ if ($categorie_filtre) {
 // Lecture et analyse du fichier CSV principal
 if (file_exists($csvFile)) {
     $handle = fopen($csvFile, 'r');
-    
+
     // Lire l'en-tête
     $header = fgetcsv($handle, 0, ",", "\"", "\\");
-    
+
     // Lire les lignes de données
     while (($row = fgetcsv($handle, 0, ",", "\"", "\\")) !== false) {
         $rowData = array_combine($header, $row);
-        
+
         // Si nous filtrons par catégorie, vérifier si ce vendeur est dans notre liste filtrée
         if ($categorie_filtre && !isset($vendeurs_filtres[$rowData['Vendor']])) {
             continue; // Passer au suivant si ce vendeur n'est pas dans la catégorie
         }
-        
+
         $csvData[] = $rowData;
         $totalVendeurs++;
-        
+
         // Calculer les totaux
         if (isset($row[1])) $totalVulnerabilites += intval($row[1]); // Vulnerabilities_Count
         if (isset($row[2])) $totalProduits += intval($row[2]); // Products_Count
     }
-    
+
     fclose($handle);
 }
 
@@ -108,6 +109,7 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -132,23 +134,23 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             --danger-color: #dc3545;
             --light-color: #f8f9fa;
             --dark-color: #343a40;
-            
+
             --light-primary: rgba(51, 102, 153, 0.1);
             --light-success: rgba(40, 167, 69, 0.1);
             --light-danger: rgba(220, 53, 69, 0.1);
-            
+
             --body-bg: #f5f5f5;
             --card-bg: white;
             --header-bg: #f0f2f5;
             --header-text: #333333;
-            
+
             --border-radius: 4px;
             --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             --transition: all 0.2s ease;
-            
+
             --font-primary: 'Arial', sans-serif;
         }
-        
+
         /* Styles de base */
         body {
             background-color: var(--body-bg);
@@ -156,19 +158,27 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             color: #333;
             line-height: 1.5;
         }
-        
+
         /* Layout principal - plus compact */
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 15px;
         }
-        
+
         /* Styles pour les couleurs de fond claires */
-        .bg-light-primary { background-color: var(--light-primary); }
-        .bg-light-success { background-color: var(--light-success); }
-        .bg-light-danger { background-color: var(--light-danger); }
-        
+        .bg-light-primary {
+            background-color: var(--light-primary);
+        }
+
+        .bg-light-success {
+            background-color: var(--light-success);
+        }
+
+        .bg-light-danger {
+            background-color: var(--light-danger);
+        }
+
         /* En-tête de page - plus sobre */
         .page-header {
             background: var(--header-bg);
@@ -179,36 +189,36 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             box-shadow: var(--box-shadow);
             border-bottom: 1px solid #ddd;
         }
-        
+
         .page-header h1 {
             font-weight: 600;
             font-size: 1.5rem;
             margin-bottom: 0;
         }
-        
+
         .page-header p {
             margin-bottom: 0;
             font-size: 0.9rem;
         }
-        
+
         .category-header .category-label {
             font-weight: normal;
         }
-        
+
         .category-header .category-name {
             font-weight: 600;
         }
-        
+
         .page-header .btn-outline-secondary {
             border-color: #cdcdcd;
             color: #333;
         }
-        
+
         .page-header .btn-outline-secondary:hover {
             background-color: #e9ecef;
             border-color: #ced4da;
         }
-        
+
         /* Session box - plus classique */
         .session-box {
             background-color: #f8f9fa;
@@ -218,7 +228,7 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-left: 2px solid var(--primary-color);
             margin-top: 0;
         }
-        
+
         .session-header {
             display: flex;
             align-items: center;
@@ -228,25 +238,25 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-bottom: 1px solid #dee2e6;
             color: var(--dark-color);
         }
-        
+
         .session-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 5px;
         }
-        
+
         .session-row {
             display: flex;
             font-size: 0.85rem;
         }
-        
+
         .session-label {
             font-weight: 600;
             color: var(--secondary-color);
             margin-right: 5px;
             width: 55px;
         }
-        
+
         /* Cartes statistiques - plus classiques */
         .stats-card {
             background-color: var(--card-bg);
@@ -261,20 +271,36 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             top: 0;
             opacity: 1;
         }
-        
+
         .stats-card:hover {
             transform: none;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
         }
-        
-        .text-primary { color: var(--primary-color) !important; }
-        .text-success { color: var(--success-color) !important; }
-        .text-danger { color: var(--danger-color) !important; }
-        
-        .border-left-primary { border-left-color: var(--primary-color); }
-        .border-left-success { border-left-color: var(--success-color); }
-        .border-left-danger { border-left-color: var(--danger-color); }
-        
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+
+        .border-left-primary {
+            border-left-color: var(--primary-color);
+        }
+
+        .border-left-success {
+            border-left-color: var(--success-color);
+        }
+
+        .border-left-danger {
+            border-left-color: var(--danger-color);
+        }
+
         .stats-icon-container {
             width: 48px;
             height: 48px;
@@ -284,11 +310,11 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             justify-content: center;
             margin-right: 15px;
         }
-        
+
         .stats-icon {
             font-size: 18px;
         }
-        
+
         .stats-card h4 {
             color: var(--dark-color);
             font-size: 0.85rem;
@@ -296,13 +322,13 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             margin-bottom: 3px;
             text-transform: uppercase;
         }
-        
+
         .stats-value {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0;
         }
-        
+
         /* Recherche avancée - plus compacte */
         .search-container {
             background-color: var(--card-bg);
@@ -311,7 +337,7 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             padding: 15px;
             margin-bottom: 15px;
         }
-        
+
         .search-container h3 {
             font-size: 1rem;
             font-weight: 600;
@@ -320,14 +346,14 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding-bottom: 8px;
         }
-        
+
         .search-label {
             font-weight: 600;
             font-size: 0.85rem;
             color: var(--dark-color);
             margin-bottom: 4px;
         }
-        
+
         .search-input {
             border-radius: var(--border-radius);
             border: 1px solid #dee2e6;
@@ -335,12 +361,12 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             font-size: 0.85rem;
             transition: var(--transition);
         }
-        
+
         .search-input:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.15rem rgba(51, 102, 153, 0.25);
         }
-        
+
         .btn-search {
             background-color: var(--primary-color);
             color: white;
@@ -351,11 +377,11 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             font-size: 0.85rem;
             transition: var(--transition);
         }
-        
+
         .btn-search:hover {
             background-color: #265480;
         }
-        
+
         .btn-reset {
             background-color: var(--secondary-color);
             color: white;
@@ -366,11 +392,11 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             font-size: 0.85rem;
             transition: var(--transition);
         }
-        
+
         .btn-reset:hover {
             background-color: #5a6268;
         }
-        
+
         /* Conteneur de tableau - plus compact */
         .table-container {
             background-color: var(--card-bg);
@@ -379,7 +405,7 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             padding: 15px;
             margin-bottom: 15px;
         }
-        
+
         .table-header {
             display: flex;
             justify-content: space-between;
@@ -388,21 +414,21 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding-bottom: 10px;
         }
-        
+
         .table-title {
             font-size: 1rem;
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 0;
         }
-        
+
         /* Styles de tableau - plus simples et classiques */
         .table {
             width: 100%;
             margin-bottom: 0;
             border: 1px solid #dee2e6;
         }
-        
+
         .table th {
             background-color: #f8f9fa;
             color: #333;
@@ -411,18 +437,18 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             padding: 8px;
             font-size: 0.85rem;
         }
-        
+
         .table td {
             vertical-align: middle;
             padding: 8px;
             border-bottom: 1px solid #dee2e6;
             font-size: 0.9rem;
         }
-        
+
         .table-hover tbody tr:hover {
             background-color: rgba(0, 0, 0, 0.03);
         }
-        
+
         /* Boutons d'action - plus simples */
         .btn-action {
             padding: 4px 10px;
@@ -431,21 +457,21 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             font-size: 0.85rem;
             transition: var(--transition);
         }
-        
+
         .btn-action:hover {
             opacity: 0.9;
         }
-        
+
         .btn-report {
             background-color: var(--primary-color);
             color: white;
             border: none;
         }
-        
+
         .btn-report:hover {
             background-color: #265480;
         }
-        
+
         /* Footer - plus discret */
         .dashboard-footer {
             text-align: center;
@@ -455,7 +481,7 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-top: 1px solid #dee2e6;
             margin-top: 15px;
         }
-        
+
         /* Pagination et contrôles DataTables - plus classiques */
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             margin: 0 2px;
@@ -463,64 +489,64 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
             border-radius: var(--border-radius);
             border: 1px solid #dee2e6;
         }
-        
+
         .dataTables_wrapper .dataTables_paginate .paginate_button.current {
             background-color: var(--primary-color);
             color: white !important;
             border-color: var(--primary-color);
         }
-        
+
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
             background-color: #e9ecef;
             border-color: #dee2e6;
         }
-        
+
         .dataTables_info {
             font-size: 0.85rem;
             color: var(--secondary-color);
             padding-top: 0.5em;
         }
-        
-        .dataTables_length select, 
+
+        .dataTables_length select,
         .dataTables_filter input {
             border: 1px solid #dee2e6;
             border-radius: var(--border-radius);
             padding: 4px 8px;
             font-size: 0.85rem;
         }
-        
+
         /* Media queries pour la réactivité */
         @media (max-width: 992px) {
             .dashboard-container {
                 padding: 15px;
             }
-            
+
             .page-header {
                 padding: 15px;
             }
-            
+
             .session-grid {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         @media (max-width: 768px) {
             .page-header .row {
                 flex-direction: column;
             }
-            
+
             .col-md-6:first-child {
                 margin-bottom: 15px;
             }
-            
+
             .session-box {
                 margin-top: 15px;
             }
-            
+
             .stats-card {
                 margin-bottom: 15px;
             }
-            
+
             .search-container,
             .table-container {
                 padding: 15px;
@@ -528,263 +554,274 @@ $pageTitle = $categorie_filtre ? "Vendeurs - $categorie_filtre" : "Dashboard des
         }
     </style>
 </head>
+
 <body>
-<div class="dashboard-container">
-    <!-- En-tête de la page avec informations de session -->
-    <div class="page-header">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <?php if ($categorie_filtre): ?>
-                    <div class="category-header">
-                        <h1>
-                            <span class="category-label">Catégorie :</span>
-                            <span class="category-name"><?= $categorie_filtre ?></span>
-                        </h1>
-                        <p class="d-flex align-items-center mt-2">
-                            <a href="categories.php?famille=<?= urlencode($_GET['famille'] ?? '') ?>" class="btn btn-sm btn-outline-secondary me-2">
-                                <i class="fas fa-arrow-left"></i> Retour
-                            </a>
-                        </p>
-                    </div>
-                <?php else: ?>
-                    <h1>Liste des Vendeurs</h1>
-                    <p>Vue d'ensemble des vulnérabilités par vendeur</p>
-                <?php endif; ?>
-            </div>
-            <div class="col-lg-6">
-                <?php if (isset($_SESSION['current_log'])): ?>
-                    <div class="session-box">
-                        <div class="session-header">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <span>Analyse en cours</span>
+    <div class="dashboard-container">
+        <!-- En-tête de la page avec informations de session -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <?php if ($categorie_filtre): ?>
+                        <div class="category-header">
+                            <h1>
+                                <span class="category-label">Catégorie :</span>
+                                <span class="category-name"><?= $categorie_filtre ?></span>
+                            </h1>
+                            <p class="d-flex align-items-center mt-2">
+                                <a href="categories.php?famille=<?= urlencode($_GET['famille'] ?? '') ?>" class="btn btn-sm btn-outline-secondary me-2">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                            </p>
                         </div>
-                        <div class="session-grid">
-                            <div class="session-row">
-                                <div class="session-label">Type:</div>
-                                <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['type']) ?></div>
+                    <?php else: ?>
+                        <h1>Liste des Vendeurs</h1>
+                        <p>Vue d'ensemble des vulnérabilités par vendeur</p>
+                    <?php endif; ?>
+                </div>
+                <div class="col-lg-6">
+                    <?php if (isset($_SESSION['current_log'])): ?>
+                        <div class="session-box">
+                            <div class="session-header">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span>Analyse en cours</span>
                             </div>
-                            <div class="session-row">
-                                <div class="session-label">Année:</div>
-                                <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['annee']) ?></div>
-                            </div>
-                            <div class="session-row">
-                                <div class="session-label">Début:</div>
-                                <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['start_time']) ?></div>
-                            </div>
-                            <div class="session-row">
-                                <div class="session-label">Fichier:</div>
-                                <div class="session-value text-truncate"><?= basename(htmlspecialchars($_SESSION['current_log']['file'])) ?></div>
+                            <div class="session-grid">
+                                <div class="session-row">
+                                    <div class="session-label">Type:</div>
+                                    <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['type']) ?></div>
+                                </div>
+                                <div class="session-row">
+                                    <div class="session-label">Année:</div>
+                                    <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['annee']) ?></div>
+                                </div>
+                                <div class="session-row">
+                                    <div class="session-label">Début:</div>
+                                    <div class="session-value"><?= htmlspecialchars($_SESSION['current_log']['start_time']) ?></div>
+                                </div>
+                                <div class="session-row">
+                                    <div class="session-label">Fichier:</div>
+                                    <div class="session-value text-truncate"><?= basename(htmlspecialchars($_SESSION['current_log']['file'])) ?></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Cartes de statistiques -->
-    <div class="row">
-        <?php foreach ($statsCards as $index => $card): ?>
-            <?php 
+        <!-- Cartes de statistiques -->
+        <div class="row">
+            <?php foreach ($statsCards as $index => $card): ?>
+                <?php
                 $borderClasses = [
                     'text-primary' => 'border-left-primary',
                     'text-danger' => 'border-left-danger',
                     'text-success' => 'border-left-success'
                 ];
                 $borderClass = $borderClasses[$card['color']] ?? '';
-            ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="stats-card <?= $borderClass ?>">
-                    <div class="d-flex align-items-center">
-                        <div class="stats-icon-container <?= $card['bg'] ?>">
-                            <i class="<?= $card['icon'] ?> stats-icon <?= $card['color'] ?>"></i>
-                        </div>
-                        <div>
-                            <h4><?= $card['title'] ?></h4>
-                            <p class="stats-value <?= $card['color'] ?>"><?= formatNumber($card['value']) ?></p>
+                ?>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="stats-card <?= $borderClass ?>">
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon-container <?= $card['bg'] ?>">
+                                <i class="<?= $card['icon'] ?> stats-icon <?= $card['color'] ?>"></i>
+                            </div>
+                            <div>
+                                <h4><?= $card['title'] ?></h4>
+                                <p class="stats-value <?= $card['color'] ?>"><?= formatNumber($card['value']) ?></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
+            <?php endforeach; ?>
+        </div>
 
-    <!-- Recherche avancée - structure plus compacte -->
-    <div class="search-container">
-        <h3><i class="fas fa-search me-2"></i>Recherche</h3>
-        <div class="row g-2">
-            <div class="col-lg-4 col-md-6">
-                <div class="mb-2">
-                    <label for="vendor-search" class="search-label">Nom du vendeur</label>
-                    <input type="text" id="vendor-search" class="form-control form-control-sm search-input" placeholder="Microsoft, Adobe...">
+        <!-- Recherche avancée - structure plus compacte -->
+        <div class="search-container">
+            <h3><i class="fas fa-search me-2"></i>Recherche</h3>
+            <div class="row g-2">
+                <div class="col-lg-4 col-md-6">
+                    <div class="mb-2">
+                        <label for="vendor-search" class="search-label">Nom du vendeur</label>
+                        <input type="text" id="vendor-search" class="form-control form-control-sm search-input" placeholder="Microsoft, Adobe...">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="mb-2">
+                        <label for="vuln-min" class="search-label">Vulnérabilités min.</label>
+                        <input type="number" id="vuln-min" class="form-control form-control-sm search-input" min="0">
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="mb-2">
+                        <label for="prod-min" class="search-label">Produits min.</label>
+                        <input type="number" id="prod-min" class="form-control form-control-sm search-input" min="0">
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="mb-2">
-                    <label for="vuln-min" class="search-label">Vulnérabilités min.</label>
-                    <input type="number" id="vuln-min" class="form-control form-control-sm search-input" min="0">
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="mb-2">
-                    <label for="prod-min" class="search-label">Produits min.</label>
-                    <input type="number" id="prod-min" class="form-control form-control-sm search-input" min="0">
-                </div>
+            <div class="mt-2">
+                <button id="apply-search" class="btn-search me-2">
+                    <i class="fas fa-filter me-1"></i>Filtrer
+                </button>
+                <button id="reset-search" class="btn-reset">
+                    <i class="fas fa-undo me-1"></i>Réinitialiser
+                </button>
             </div>
         </div>
-        <div class="mt-2">
-            <button id="apply-search" class="btn-search me-2">
-                <i class="fas fa-filter me-1"></i>Filtrer
-            </button>
-            <button id="reset-search" class="btn-reset">
-                <i class="fas fa-undo me-1"></i>Réinitialiser
-            </button>
-        </div>
-    </div>
 
-    <!-- Tableau des vendeurs -->
-    <div class="table-container">
-        <div class="table-header">
-            <h2 class="table-title"><i class="fas fa-list me-2"></i>Vendeurs</h2>
-            <div class="table-actions">
-                <span class="badge bg-secondary"><?= formatNumber($totalVendeurs) ?> vendeurs</span>
+        <!-- Tableau des vendeurs -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2 class="table-title"><i class="fas fa-list me-2"></i>Vendeurs</h2>
+                <div class="table-actions">
+                    <span class="badge bg-secondary"><?= formatNumber($totalVendeurs) ?> vendeurs</span>
+                </div>
             </div>
-        </div>
-        <div class="table-responsive">
-            <table id="vendors-table" class="table table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th>Vendeur</th>
-                    <th class="text-center">Vulnérabilités</th>
-                    <th class="text-center">Produits</th>
-                    <th class="text-center" style="width: 120px;">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if (!empty($csvData)): ?>
-                    <?php foreach ($csvData as $row): ?>
-                        <?php
-                        $vulnCount = intval($row['Vulnerabilities_Count']);
-                        $prodCount = intval($row['Products_Count']);
-                        ?>
+            <div class="table-responsive">
+                <table id="vendors-table" class="table table-hover table-bordered">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($row['Vendor']) ?></td>
-                            <td class="text-center fw-semibold"><?= formatNumber($vulnCount) ?></td>
-                            <td class="text-center"><?= formatNumber($prodCount) ?></td>
-                            <td class="text-center">
-                                <a href="3-statistique_vendeur.php?vendor=<?= urlencode($row['Vendor']) ?>"
-                                   class="btn btn-sm btn-report btn-action">
-                                    <i class="fas fa-chart-bar me-1"></i>Rapport
-                                </a>
-                            </td>
+                            <th>Vendeur</th>
+                            <th class="text-center">Vulnérabilités</th>
+                            <th class="text-center">Produits</th>
+                            <th class="text-center" style="width: 120px;">Actions</th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4" class="text-center py-3">
-                            <div class="text-muted">
-                                <i class="fas fa-info-circle me-2"></i>Aucune donnée disponible
-                            </div>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($csvData)): ?>
+                            <?php foreach ($csvData as $row): ?>
+                                <?php
+                                $vulnCount = intval($row['Vulnerabilities_Count']);
+                                $prodCount = intval($row['Products_Count']);
+                                ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['Vendor']) ?></td>
+                                    <td class="text-center fw-semibold"><?= formatNumber($vulnCount) ?></td>
+                                    <td class="text-center"><?= formatNumber($prodCount) ?></td>
+                                    <td class="text-center">
+                                        <a href="3-statistique_vendeur.php?vendor=<?= urlencode($row['Vendor']) ?>"
+                                            class="btn btn-sm btn-report btn-action">
+                                            <i class="fas fa-chart-bar me-1"></i>Rapport
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center py-3">
+                                    <div class="text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>Aucune donnée disponible
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer - plus sobre -->
+        <div class="dashboard-footer">
+            <p>© <?= date('Y') ?> - Tableau de bord des vendeurs</p>
         </div>
     </div>
-    
-    <!-- Footer - plus sobre -->
-    <div class="dashboard-footer">
-        <p>© <?= date('Y') ?> - Tableau de bord des vendeurs</p>
-    </div>
-</div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Désactiver les messages d'erreur de DataTables
-        $.fn.dataTable.ext.errMode = 'none';
-        
-        // Initialiser DataTables avec paramètres optimisés
-        var table = $('#vendors-table').DataTable({
-            responsive: true,
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
-            },
-            order: [[1, 'desc']],
-            columnDefs: [
-                { orderable: false, targets: 3 },
-                { type: 'num-fmt', targets: [1, 2] }
-            ],
-            pageLength: 20,
-            dom: 'lrtip',
-            lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "Tous"]],
-            buttons: []
-        });
-        
-        // Fonction pour appliquer les filtres
-        $('#apply-search').on('click', function() {
-            applyFilters();
-        });
-        
-        // Fonction pour réinitialiser les filtres
-        $('#reset-search').on('click', function() {
-            $('#vendor-search').val('');
-            $('#vuln-min').val('');
-            $('#prod-min').val('');
-            table.search('').columns().search('').draw();
-        });
-        
-        // Appliquer les filtres lorsqu'on appuie sur Entrée dans un champ
-        $('.search-input').on('keypress', function(e) {
-            if (e.which === 13) {
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Désactiver les messages d'erreur de DataTables
+            $.fn.dataTable.ext.errMode = 'none';
+
+            // Initialiser DataTables avec paramètres optimisés
+            var table = $('#vendors-table').DataTable({
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+                },
+                order: [
+                    [1, 'desc']
+                ],
+                columnDefs: [{
+                        orderable: false,
+                        targets: 3
+                    },
+                    {
+                        type: 'num-fmt',
+                        targets: [1, 2]
+                    }
+                ],
+                pageLength: 20,
+                dom: 'lrtip',
+                lengthMenu: [
+                    [10, 20, 50, 100, -1],
+                    [10, 20, 50, 100, "Tous"]
+                ],
+                buttons: []
+            });
+
+            // Fonction pour appliquer les filtres
+            $('#apply-search').on('click', function() {
                 applyFilters();
-            }
-        });
-        
-        // Fonction pour appliquer tous les filtres
-        function applyFilters() {
-            var vendorSearch = $('#vendor-search').val();
-            var vulnMin = $('#vuln-min').val();
-            var prodMin = $('#prod-min').val();
-            
-            // Réinitialiser les filtres
-            table.columns().search('').draw(false);
-            
-            // Appliquer la recherche par vendeur (colonne 0)
-            if (vendorSearch) {
-                table.column(0).search(vendorSearch, true, false);
-            }
-            
-            // Filtrer les lignes selon les valeurs minimales de vulnérabilités et produits
-            $.fn.dataTable.ext.search.push(
-                function(settings, data, dataIndex) {
-                    var vulnCount = parseFloat(data[1].replace(/[^\d.-]/g, '')) || 0;
-                    var prodCount = parseFloat(data[2].replace(/[^\d.-]/g, '')) || 0;
-                    
-                    var vulnMinFilter = vulnMin ? parseFloat(vulnMin) : 0;
-                    var prodMinFilter = prodMin ? parseFloat(prodMin) : 0;
-                    
-                    // Retourner true si toutes les conditions sont remplies
-                    return (vulnCount >= vulnMinFilter && prodCount >= prodMinFilter);
+            });
+
+            // Fonction pour réinitialiser les filtres
+            $('#reset-search').on('click', function() {
+                $('#vendor-search').val('');
+                $('#vuln-min').val('');
+                $('#prod-min').val('');
+                table.search('').columns().search('').draw();
+            });
+
+            // Appliquer les filtres lorsqu'on appuie sur Entrée dans un champ
+            $('.search-input').on('keypress', function(e) {
+                if (e.which === 13) {
+                    applyFilters();
                 }
-            );
-            
-            // Appliquer tous les filtres
-            table.draw();
-            
-            // Nettoyer les filtres personnalisés après l'application
-            $.fn.dataTable.ext.search.pop();
-        }
-        
-        // Améliorer l'apparence des contrôles DataTables
-        $('.dataTables_length select').addClass('form-select form-select-sm');
-        $('.dataTables_filter input').addClass('form-control form-control-sm');
-    });
-</script>
+            });
+
+            // Fonction pour appliquer tous les filtres
+            function applyFilters() {
+                var vendorSearch = $('#vendor-search').val();
+                var vulnMin = $('#vuln-min').val();
+                var prodMin = $('#prod-min').val();
+
+                // Réinitialiser les filtres
+                table.columns().search('').draw(false);
+
+                // Appliquer la recherche par vendeur (colonne 0)
+                if (vendorSearch) {
+                    table.column(0).search(vendorSearch, true, false);
+                }
+
+                // Filtrer les lignes selon les valeurs minimales de vulnérabilités et produits
+                $.fn.dataTable.ext.search.push(
+                    function(settings, data, dataIndex) {
+                        var vulnCount = parseFloat(data[1].replace(/[^\d.-]/g, '')) || 0;
+                        var prodCount = parseFloat(data[2].replace(/[^\d.-]/g, '')) || 0;
+
+                        var vulnMinFilter = vulnMin ? parseFloat(vulnMin) : 0;
+                        var prodMinFilter = prodMin ? parseFloat(prodMin) : 0;
+
+                        // Retourner true si toutes les conditions sont remplies
+                        return (vulnCount >= vulnMinFilter && prodCount >= prodMinFilter);
+                    }
+                );
+
+                // Appliquer tous les filtres
+                table.draw();
+
+                // Nettoyer les filtres personnalisés après l'application
+                $.fn.dataTable.ext.search.pop();
+            }
+
+            // Améliorer l'apparence des contrôles DataTables
+            $('.dataTables_length select').addClass('form-select form-select-sm');
+            $('.dataTables_filter input').addClass('form-control form-control-sm');
+        });
+    </script>

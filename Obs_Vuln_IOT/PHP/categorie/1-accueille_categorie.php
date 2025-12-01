@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Page principale des familles de produits
  * Récupère dynamiquement les familles depuis le fichier CSV
@@ -12,7 +13,7 @@ $annee_analysee = isset($_SESSION['current_log']['annee']) ? $_SESSION['current_
 // Chemin du fichier CSV
 $csv_file = '10-produits_avec_familles.csv';
 // Si le chemin spécifique est disponible, utilisez-le
-$specific_path = '/Users/abderaoufbouhali/PycharmProjects/Mémoire/produit/'. $annee_analysee .'/1-2-produits_avec_familles-(manuelle).csv';
+$specific_path = '../Python/produit/' . $annee_analysee . '/1-2-produits_avec_familles-(manuelle).csv';
 if (file_exists($specific_path)) {
     $csv_file = $specific_path;
 }
@@ -24,40 +25,40 @@ $familles_count = [];
 if (($handle = fopen($csv_file, "r")) !== FALSE) {
     // Lire l'en-tête
     $header = fgetcsv($handle, 0, ",", "\"", "\\");
-    
+
     // Chercher l'index de la colonne 'Family'
     $famille_index = array_search('Family', $header);
-    
+
     if ($famille_index === false) {
         die("Structure du CSV incorrecte: colonne 'Family' manquante");
     }
-    
+
     // Parcourir le fichier CSV
     while (($data = fgetcsv($handle, 0, ",", "\"", "\\")) !== FALSE) {
         $famille_nom = $data[$famille_index];
-        
+
         // Sauter les lignes vides ou sans famille
         if (empty($famille_nom)) continue;
-        
+
         // Compter les produits par famille
         if (!isset($familles_count[$famille_nom])) {
             $familles_count[$famille_nom] = 0;
         }
         $familles_count[$famille_nom]++;
     }
-    
+
     fclose($handle);
-    
+
     // On vérifie si "Autres" existe dans la liste
     $autres_count = 0;
     if (isset($familles_count['Autres'])) {
         $autres_count = $familles_count['Autres'];
         unset($familles_count['Autres']); // On retire "Autres" pour le tri
     }
-    
+
     // Trier les familles par ordre alphabétique
     ksort($familles_count);
-    
+
     // Remettre "Autres" à la fin si elle existait
     if ($autres_count > 0) {
         $familles_count['Autres'] = $autres_count;
@@ -87,12 +88,14 @@ $icones = [
 $default_icon = ['icone' => 'fa-box', 'couleur' => '#7f8c8d'];
 
 // Fonction pour générer une URL propre
-function generateUrl($famille_nom) {
+function generateUrl($famille_nom)
+{
     return "categories.php?famille=" . urlencode($famille_nom);
 }
 
 // Fonction pour obtenir une description courte basée sur le nom de famille
-function getShortDescription($famille_nom) {
+function getShortDescription($famille_nom)
+{
     $descriptions = [
         'Réseau et Connectivité' => 'Switch, Router, Modem, Wi-Fi, etc.',
         'Informatique et Matériel Informatique' => 'PC, Laptop, Workstation, etc.',
@@ -108,53 +111,54 @@ function getShortDescription($famille_nom) {
         'Plateformes et Technologies Avancées' => 'AI, GPU, Robotics, etc.',
         'Autres' => 'SSD, GPON, etc.'
     ];
-    
+
     return isset($descriptions[$famille_nom]) ? $descriptions[$famille_nom] : 'Produits divers';
 }
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalogue des Produits</title>
-    
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-    
+
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
+
     <style>
         body {
             padding: 20px 0;
             background-color: #f8f9fa;
         }
-        
+
         .container {
             max-width: 1200px;
         }
-        
+
         .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .page-title {
             font-size: 24px;
             margin: 0;
             color: #343a40;
         }
-        
+
         h2 {
             font-size: 20px;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #dee2e6;
         }
-        
+
         .categories-container {
             background-color: white;
             border-radius: 5px;
@@ -162,7 +166,7 @@ function getShortDescription($famille_nom) {
             padding: 20px;
             margin-bottom: 20px;
         }
-        
+
         .category-box {
             border: 1px solid #dee2e6;
             border-radius: 5px;
@@ -175,12 +179,12 @@ function getShortDescription($famille_nom) {
             align-items: center;
             cursor: pointer;
         }
-        
+
         .category-box:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .category-icon {
             width: 60px;
             height: 60px;
@@ -192,7 +196,7 @@ function getShortDescription($famille_nom) {
             color: white;
             font-size: 24px;
         }
-        
+
         .category-title {
             font-size: 14px;
             font-weight: bold;
@@ -203,14 +207,14 @@ function getShortDescription($famille_nom) {
             align-items: center;
             justify-content: center;
         }
-        
+
         .category-description {
             font-size: 12px;
             color: #6c757d;
             text-align: center;
             line-height: 1.3;
         }
-        
+
         .category-count {
             margin-top: 10px;
             background-color: #e9ecef;
@@ -220,14 +224,14 @@ function getShortDescription($famille_nom) {
             color: #495057;
             font-weight: 600;
         }
-        
+
         @media (min-width: 1200px) {
             .col-xl-2 {
                 flex: 0 0 16.666667%;
                 max-width: 16.666667%;
             }
         }
-        
+
         .no-families {
             padding: 20px;
             text-align: center;
@@ -235,6 +239,7 @@ function getShortDescription($famille_nom) {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header-section">
@@ -245,10 +250,10 @@ function getShortDescription($famille_nom) {
                 </a>
             </div>
         </div>
-        
+
         <div class="categories-container">
             <h2>Liste des familles de produits</h2>
-            
+
             <?php if (empty($familles_count)): ?>
                 <div class="no-families">
                     <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
@@ -257,9 +262,9 @@ function getShortDescription($famille_nom) {
             <?php else: ?>
                 <div class="row">
                     <?php foreach ($familles_count as $famille_nom => $count): ?>
-                        <?php 
-                            $icon_data = isset($icones[$famille_nom]) ? $icones[$famille_nom] : $default_icon;
-                            $description = getShortDescription($famille_nom);
+                        <?php
+                        $icon_data = isset($icones[$famille_nom]) ? $icones[$famille_nom] : $default_icon;
+                        $description = getShortDescription($famille_nom);
                         ?>
                         <div class="col-md-3 col-sm-4 col-6 mb-4">
                             <a href="<?php echo generateUrl($famille_nom); ?>" class="text-decoration-none">
@@ -278,9 +283,10 @@ function getShortDescription($famille_nom) {
             <?php endif; ?>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS (optionnel) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

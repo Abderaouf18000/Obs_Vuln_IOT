@@ -5,7 +5,7 @@ import time
 import json
 
 # Définir le répertoire de base où se trouvent tous les scripts
-BASE_DIR = "/Users/abderaoufbouhali/PycharmProjects/Mémoire"
+BASE_DIR = ""
 
 
 def executer_workflow_cve(annee):
@@ -26,7 +26,6 @@ def executer_workflow_cve(annee):
     json_file = f"cvelist_nist/nvdcve-1.1-{annee}.json"
     json_folder = f"cvelist_mitre_{annee}/"
     folder_path = f"cvelist_mitre_{annee}"
-
 
     # Variables pour chaque script
     variables_scripts = {
@@ -71,7 +70,7 @@ def get_date_published(cve_id):
         "15-liste_cve_type-mitre.py": f"folder_path = '{folder_path}'",
         "16-liste_cve_type-nist.py": f"json_file = '{json_file}'",
         "24-calculate_cve_resolution_time-mitre.py": f"directory_path = '{json_folder}'",
-        "28-details_cves.py": f"json_file = '{json_file}'"
+        "28-details_cves.py": f"json_file = '{json_file}'",
     }
 
     # Liste des fichiers à exécuter dans l'ordre
@@ -86,8 +85,8 @@ def get_date_published(cve_id):
         "6-liste_vendeurs_h-nist.py",
         "7-liste_vendeurs_o-nist.py",
         "8-liste_produit_os-nist.py",
-        #"9-liste_vendeur_h_solo-nist.py",
-        #"10-liste_vendeur_o_solo-nist.py",
+        # "9-liste_vendeur_h_solo-nist.py",
+        # "10-liste_vendeur_o_solo-nist.py",
         "11-count_nbr_vuln_vendeur-nist.py",
         "12-count_nbr_produit_vendeur-nist.py",
         "14-temp_moy_vendeur-mitre.py",
@@ -108,7 +107,7 @@ def get_date_published(cve_id):
         "28-details_cves.py",
         "29-details_cves_fusion_25-28.py",
         "30-details_cves_fusion_29-19.py",
-        "31-nbr_vuln_produit-nist.py"
+        "31-nbr_vuln_produit-nist.py",
     ]
 
     # Assurez-vous que le dossier results existe
@@ -157,10 +156,7 @@ def get_date_published(cve_id):
         debut = time.time()
         try:
             process = subprocess.run(
-                commande,
-                check=False,
-                capture_output=True,
-                text=True
+                commande, check=False, capture_output=True, text=True
             )
 
             duree = round(time.time() - debut, 2)
@@ -186,6 +182,7 @@ def get_date_published(cve_id):
     print(f"Scripts échoués: {echoues}/{len(fichiers)}")
     print("==============")
 
+
 if __name__ == "__main__":
     # Obtenir l'année des arguments de ligne de commande
     annee = "2023"  # Valeur par défaut
@@ -205,6 +202,6 @@ if __name__ == "__main__":
 
     # Si vous avez un fichier de log séparé, ouvrez-le et écrivez-y
     log_path = os.path.join(BASE_DIR, "results", f"log_workflow_{annee}.txt")
-    with open(log_path, 'a', encoding='utf-8') as log_file:
+    with open(log_path, "a", encoding="utf-8") as log_file:
         log_file.write("\n[COMPLETED] Analyse terminée avec succès (100%)\n")
         log_file.flush()  # Important pour s'assurer que le message est écrit immédiatement

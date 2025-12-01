@@ -1,39 +1,40 @@
 <?php
 // Définir le fichier à lire
-$fichier_csv = "/Users/abderaoufbouhali/PycharmProjects/Mémoire/produit/results/25-produit_liste_h-nist.csv";
+$fichier_csv = "../Python/produit/results/25-produit_liste_h-nist.csv";
 $donnees = [];
 $message = "";
 
 // Si un fichier a été téléchargé
 if ($fichier_csv) {
     // Fonction pour lire le fichier CSV avec des tabulations comme séparateur
-    function lireFichierCSV($fichier, $separateur = "\t") {
+    function lireFichierCSV($fichier, $separateur = "\t")
+    {
         $donnees = [];
-        
+
         // Vérifier si le fichier existe
         if (!file_exists($fichier)) {
             return ["erreur" => "Le fichier n'existe pas."];
         }
-        
+
         // Ouvrir le fichier en lecture
         $handle = fopen($fichier, 'r');
         if ($handle === false) {
             return ["erreur" => "Impossible d'ouvrir le fichier."];
         }
-        
+
         // Lire l'en-tête
         $entetes = fgetcsv($handle, 0, $separateur);
-        
+
         // Lire les données ligne par ligne
         while (($ligne = fgetcsv($handle, 0, $separateur)) !== false) {
             if (count($ligne) === count($entetes)) {
                 $donnees[] = array_combine($entetes, $ligne);
             }
         }
-        
+
         // Fermer le fichier
         fclose($handle);
-        
+
         return $donnees;
     }
 
@@ -51,6 +52,7 @@ if ($fichier_csv) {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,36 +63,38 @@ if ($fichier_csv) {
             line-height: 1.6;
             margin: 20px;
         }
-        
-        h1, h2 {
+
+        h1,
+        h2 {
             color: #333;
             text-align: center;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        
+
         th {
             background-color: #4CAF50;
             color: white;
             position: sticky;
             top: 0;
         }
-        
+
         tr:hover {
             background-color: #f5f5f5;
         }
-        
+
         .cve-list {
             max-height: 150px;
             overflow-y: auto;
@@ -99,7 +103,7 @@ if ($fichier_csv) {
             border-radius: 4px;
             border: 1px solid #ddd;
         }
-        
+
         .badge {
             background-color: #e74c3c;
             color: white;
@@ -107,7 +111,7 @@ if ($fichier_csv) {
             border-radius: 10px;
             font-size: 0.8em;
         }
-        
+
         .upload-form {
             max-width: 500px;
             margin: 0 auto;
@@ -116,13 +120,13 @@ if ($fichier_csv) {
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .upload-form input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
         }
-        
+
         .upload-form button {
             background-color: #4CAF50;
             color: white;
@@ -132,11 +136,11 @@ if ($fichier_csv) {
             border-radius: 4px;
             width: 100%;
         }
-        
+
         .upload-form button:hover {
             background-color: #45a049;
         }
-        
+
         .erreur {
             background-color: #ffebee;
             color: #c62828;
@@ -145,7 +149,7 @@ if ($fichier_csv) {
             margin: 10px 0;
             text-align: center;
         }
-        
+
         .succes {
             background-color: #e8f5e9;
             color: #2e7d32;
@@ -156,9 +160,10 @@ if ($fichier_csv) {
         }
     </style>
 </head>
+
 <body>
     <h1>Analyse des vulnérabilités par produit</h1>
-    
+
     <div class="upload-form">
         <h2>Téléchargez votre fichier CSV</h2>
         <form method="post" enctype="multipart/form-data">
@@ -167,7 +172,7 @@ if ($fichier_csv) {
         </form>
         <?php echo $message; ?>
     </div>
-    
+
     <?php if (empty($donnees)): ?>
         <?php if (empty($message)): ?>
             <p style="text-align: center; margin-top: 20px;">Veuillez télécharger un fichier CSV pour afficher les données.</p>
@@ -206,4 +211,5 @@ if ($fichier_csv) {
         </table>
     <?php endif; ?>
 </body>
+
 </html>
