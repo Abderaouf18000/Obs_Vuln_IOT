@@ -1,6 +1,6 @@
 <?php
 // Définir le fichier à lire
-$fichier_csv = "../Python/produit/results/25-produit_liste_h-nist.csv";
+$fichier_csv = "../../Python/produit/results/25-produit_liste_h-nist.csv";
 $donnees = [];
 $message = "";
 

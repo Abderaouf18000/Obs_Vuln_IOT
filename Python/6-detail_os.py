@@ -243,8 +243,8 @@ def process_os_list_from_csv(csv_path, cve_json_path, output_csv_path, max_os=No
 
 if __name__ == "__main__":
     # Définir les chemins des fichiers
-    csv_input_path = "../Python/results/8-liste_produit_os-nist.csv"
-    cve_json_path = "../Python/cvelist_nist/nvdcve-1.1-2024.json"
+    csv_input_path = "../../Python/results/8-liste_produit_os-nist.csv"
+    cve_json_path = "../../Python/cvelist_nist/nvdcve-1.1-2024.json"
     csv_output_path = "vulnerabilites_completes.csv"
 
     # Limiter le nombre d'OS à traiter pour les tests (None pour tous)

@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } else {
                 // Chemin vers le script Python
-                $pythonScript = '../Python/main.py';
+                $pythonScript = '../../Python/main.py';
 
                 // Vérifier que le script Python existe
                 if (!file_exists($pythonScript)) {

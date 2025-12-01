@@ -5,7 +5,7 @@ import time
 import json
 
 # Définir le répertoire de base où se trouvent tous les scripts
-BASE_DIR = "../Python/"
+BASE_DIR = os.getcwd().replace("public_html/PHP", "Python")
 
 
 def executer_workflow_cve(annee):

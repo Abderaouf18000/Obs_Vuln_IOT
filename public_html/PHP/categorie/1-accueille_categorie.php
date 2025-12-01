@@ -13,7 +13,7 @@ $annee_analysee = isset($_SESSION['current_log']['annee']) ? $_SESSION['current_
 // Chemin du fichier CSV
 $csv_file = '10-produits_avec_familles.csv';
 // Si le chemin spécifique est disponible, utilisez-le
-$specific_path = '../Python/produit/' . $annee_analysee . '/1-2-produits_avec_familles-(manuelle).csv';
+$specific_path = '../../Python/produit/' . $annee_analysee . '/1-2-produits_avec_familles-(manuelle).csv';
 if (file_exists($specific_path)) {
     $csv_file = $specific_path;
 }

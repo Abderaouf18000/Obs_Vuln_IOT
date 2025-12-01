@@ -13,7 +13,7 @@ function formatNumber($number)
 $categorie_filtre = isset($_GET['categorie']) ? htmlspecialchars($_GET['categorie'], ENT_QUOTES, 'UTF-8') : null;
 
 // Traitement des données CSV
-$csvFile = '../Python/results/11-fusion_9_10_14-fin.csv';
+$csvFile = '../../Python/results/11-fusion_9_10_14-fin.csv';
 $csvData = [];
 $totalVendeurs = 0;
 $totalVulnerabilites = 0;
@@ -23,7 +23,7 @@ $totalProduits = 0;
 $vendeurs_filtres = [];
 if ($categorie_filtre) {
     $categoryCsvFile = '10produits_avec_familles.csv';
-    $specific_path = '../Python/categorie/categ_file-2024/10-produits_avec_familles.csv';
+    $specific_path = '../../Python/categorie/categ_file-2024/10-produits_avec_familles.csv';
     if (file_exists($specific_path)) {
         $categoryCsvFile = $specific_path;
     }

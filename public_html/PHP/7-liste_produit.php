@@ -6,7 +6,7 @@ session_start();
 $annee_analysee = isset($_SESSION['current_log']['annee']) ? $_SESSION['current_log']['annee'] : '2024'; // Valeur par défaut si non définie
 
 // Utiliser l'année dans le chemin du fichier
-$csv_file = '../Python/produit/' . $annee_analysee . '/1-3-produits_avec_familles_nbr_vulnprod.csv';
+$csv_file = '../../Python/produit/' . $annee_analysee . '/1-3-produits_avec_familles_nbr_vulnprod.csv';
 
 $display_limit = 30; // Nombre de lignes à afficher par page
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;

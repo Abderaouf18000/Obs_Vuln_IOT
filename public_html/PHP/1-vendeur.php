@@ -10,7 +10,7 @@ function formatNumber($number)
 }
 
 // Traitement des données CSV
-$csvFile = '../Python/results/11-fusion_9_10_14-fin.csv';
+$csvFile = '../../Python/results/11-fusion_9_10_14-fin.csv';
 $csvData = [];
 $totalVendeurs = 0;
 $totalVulnerabilites = 0;

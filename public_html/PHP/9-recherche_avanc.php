@@ -9,7 +9,7 @@ session_start();
 $annee_analysee = isset($_SESSION['current_log']['annee']) ? $_SESSION['current_log']['annee'] : '2024'; // Valeur par défaut si non définie
 
 // Utiliser l'année dans le chemin du fichier
-$csv_file = '../Python/produit/' . $annee_analysee . '/7-catégorie_cwe_name.csv';
+$csv_file = '../../Python/produit/' . $annee_analysee . '/7-catégorie_cwe_name.csv';
 // Chemin vers le fichier CSV
 
 // Fonction pour obtenir les valeurs uniques d'une colonne dans le CSV

@@ -7,4 +7,4 @@ Le projet est structuré en deux dossiers principaux :
 
 Le fichier principal (main) du projet se trouve dans le chemin suivant :
 
-PHP/index.php
+public_html/PHP/index.php

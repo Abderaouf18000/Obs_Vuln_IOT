@@ -12,9 +12,9 @@ class vstatistique
 
     function lireProduitsEtCveAvecScoresEtTypes($vendeurRechercher)
     {
-        $produitsCsvFile = '../Python/results/6-liste_vendeurs_h-nist.csv';
-        $scoresCsvFile = '../Python/results/2-liste_cve_scores-nist-mitre.csv';
-        $typesCsvFile = '../Python/results/19-associer_cwe18_type1000.csv';
+        $produitsCsvFile = '../../Python/results/6-liste_vendeurs_h-nist.csv';
+        $scoresCsvFile = '../../Python/results/2-liste_cve_scores-nist-mitre.csv';
+        $typesCsvFile = '../../Python/results/19-associer_cwe18_type1000.csv';
 
         // Vérifier si les fichiers existent et sont lisibles
         if (!file_exists($produitsCsvFile) || !is_readable($produitsCsvFile)) {
@@ -147,7 +147,7 @@ class vstatistique
 
     function countUniqueVulnerabilitiesByVendor($vendorName)
     {
-        $filename = '../Python/results/6-liste_vendeurs_h_cve-nist.csv';
+        $filename = '../../Python/results/6-liste_vendeurs_h_cve-nist.csv';
         // Vérifier que le fichier existe
         if (!file_exists($filename)) {
             return 0;
@@ -188,7 +188,7 @@ class vstatistique
 
     function countVulnerabilitiesBySeverity($vendorName)
     {
-        $filename = '../Python/results/20-fusion_2fin_6-objscore.csv';
+        $filename = '../../Python/results/20-fusion_2fin_6-objscore.csv';
 
         // Vérifier que le fichier existe
         if (!file_exists($filename)) {
@@ -288,7 +288,7 @@ class vstatistique
 
     function getTypeVulnerabilityByVendor($vendorName)
     {
-        $csvFile = '../Python/results/22-typepop_vendor-21.csv';
+        $csvFile = '../../Python/results/22-typepop_vendor-21.csv';
 
         // Vérifier si le fichier existe
         if (!file_exists($csvFile)) {
@@ -336,7 +336,7 @@ class vstatistique
         return $result;
     }
 
-    function getVendorAverageScore($vendorName, $csvFilePath = '../Python/results/23-score_moy_vendor.csv', $precision = 2)
+    function getVendorAverageScore($vendorName, $csvFilePath = '../../Python/results/23-score_moy_vendor.csv', $precision = 2)
     {
         // Vérifier si le fichier existe
         if (!file_exists($csvFilePath)) {
@@ -388,7 +388,7 @@ class vstatistique
 
     function getVendorAverageFixTime($vendorName)
     {
-        $csvFilePath = '../Python/results/14-temp_moy_vendeur-mitre.csv';
+        $csvFilePath = '../../Python/results/14-temp_moy_vendeur-mitre.csv';
         // Vérifier si le fichier existe
         if (!file_exists($csvFilePath)) {
             error_log("Erreur: Le fichier CSV '$csvFilePath' n'existe pas");
@@ -434,7 +434,7 @@ class vstatistique
 
     function getVendorCorrectionTimes($vendorName)
     {
-        $csvFile = '../Python/results/27-traitment_26.csv';
+        $csvFile = '../../Python/results/27-traitment_26.csv';
 
         // Vérifier si le fichier existe
         if (!file_exists($csvFile)) {
