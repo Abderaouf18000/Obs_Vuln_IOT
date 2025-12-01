@@ -410,7 +410,7 @@ if ($urlForceRerun && !empty($urlAnnee)) {
                         <input type="hidden" name="redirect" value="true">
                         <p>Voulez-vous vraiment relancer l'analyse pour l'année <?php echo htmlspecialchars($urlAnnee); ?> malgré les résultats existants ?</p>
                         <button type="submit" class="btn btn-warning">Oui, relancer l'analyse</button>
-                        <a href="0-Accuille.php" class="btn btn-secondary ms-2">Non, annuler</a>
+                        <a href="index.php" class="btn btn-secondary ms-2">Non, annuler</a>
                     </form>
                 </div>
             <?php else: ?>

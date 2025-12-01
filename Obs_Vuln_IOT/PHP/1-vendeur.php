@@ -463,7 +463,7 @@ $statsCards = [
                     <?php endif; ?>
                 </div>
                 <div class="return-button-container">
-                    <a href="0-Accuille.php" class="btn-return">
+                    <a href="index.php" class="btn-return">
                         <i class="fas fa-home me-2"></i>Retour à l'accueil
                     </a>
                 </div>

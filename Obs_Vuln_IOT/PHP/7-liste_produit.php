@@ -341,7 +341,7 @@ arsort($vulnerabilities_by_product); // Trier les produits par nombre de vulnér
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Analyse des vulnérabilités par produit</h1>
             <div>
-                <a href="0-Accuille.php" class="btn btn-primary">
+                <a href="index.php" class="btn btn-primary">
                     <i class="bi bi-house-door me-1"></i> Accueil
                 </a>
             </div>

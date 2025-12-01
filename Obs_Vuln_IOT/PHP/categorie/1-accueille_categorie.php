@@ -245,7 +245,7 @@ function getShortDescription($famille_nom)
         <div class="header-section">
             <h1 class="page-title">Catalogue des Produits</h1>
             <div>
-                <a href="../0-Accuille.php" class="btn btn-primary">
+                <a href="../index.php" class="btn btn-primary">
                     <i class="fas fa-home mr-1"></i> Accueil
                 </a>
             </div>

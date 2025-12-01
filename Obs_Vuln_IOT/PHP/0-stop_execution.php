@@ -3,7 +3,7 @@ session_start();
 
 // Vérifier si une analyse est en cours
 if (!isset($_SESSION['current_log'])) {
-    header('Location: 0-Accuille.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -35,5 +35,5 @@ unset($_SESSION['current_log']);
 // Rediriger avec un message
 $_SESSION['message'] = $message;
 $_SESSION['message_type'] = 'info';
-header('Location: 0-Accuille.php');
+header('Location: index.php');
 exit;

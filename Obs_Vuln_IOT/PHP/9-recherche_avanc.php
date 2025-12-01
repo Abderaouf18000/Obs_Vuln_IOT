@@ -502,7 +502,7 @@ $cwe_categories = getUniqueValuesFromCSV($csv_file, 'Categorie_CWE');
     </div>
 
     <div class="nav-buttons">
-        <a href="0-Accuille.php" class="btn-return">
+        <a href="index.php" class="btn-return">
             <i class="fas fa-home me-2"></i>Retour à l'accueil
         </a>
     </div>
